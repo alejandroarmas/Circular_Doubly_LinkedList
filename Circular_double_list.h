@@ -1,3 +1,12 @@
+/***************************************************************
+Problem: Assignment 2.1
+Question: Your assignment is to create a circular doubly 
+linked list CLASS TEMPLATE 
+Name: Alejandro Armas 
+ID: 1433110
+Date: 12/1/2018
+Status: complete 
+****************************************************************/
 #ifndef CIRCULAR_DOUBLE_LIST_H
 #define CIRCULAR_DOUBLE_LIST_H
 

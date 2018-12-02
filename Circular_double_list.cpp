@@ -1,16 +1,7 @@
 /***************************************************************
 Problem: Assignment 2.1
 Question: Write a program that contains:
-1. A menu to allow the user to do each operation in the linked 
-list. 1.1. Each menu option represents a linked list function
-1.2. Each menu option will ask the user for the appropriate 
-information needed 2. After every operation, the program 
-will display the contents of the linked list 3. The push_front
-and push_back menu options are to receive one or a list of 
-values (in one line) (i.e. one value or more) from the user
-and make multiple calls to the linked list function accordingly
-3.1. Your program will parse the values and call the linked list 
-function. 
+Test Driver program for Circular_Doubly_List
 Name: Alejandro Armas 
 ID: 1433110
 Date: 12/1/2018

@@ -99,6 +99,8 @@ Type Circular_double_list<Type>::front() const {
 template<class Type>
 Type Circular_double_list<Type>::back() const { 
 
+Double_node<Type>* nodePtr = nullptr; // to point to list_head
+
 	if (!list_head) {
 		throw std::underflow_error("Element does not exist");
 	}

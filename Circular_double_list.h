@@ -1,11 +1,11 @@
 /***************************************************************
 Problem: Assignment 2.1
-Question: Your assignment is to create a circular doubly 
-linked list CLASS TEMPLATE 
-Name: Alejandro Armas 
+Question: Your assignment is to create a circular doubly
+linked list CLASS TEMPLATE
+Name: Alejandro Armas
 ID: 1433110
 Date: 12/1/2018
-Status: complete 
+Status: complete
 ****************************************************************/
 #ifndef CIRCULAR_DOUBLE_LIST_H
 #define CIRCULAR_DOUBLE_LIST_H
@@ -61,12 +61,12 @@ public:
 	}
 
 	//accessors prototypes
-	int size() const { return list_size;}
-	bool empty() const { return !list_size;}
-	Type front() const; 
-	Type back() const; 
-	Type at(int element) const; 
-	Double_node<Type> *head() const { return list_head;}
+	int size() const { return list_size; }
+	bool empty() const { return !list_size; }
+	Type front() const;
+	Type back() const;
+	Type at(int element) const;
+	Double_node<Type> *head() const { return list_head; }
 	int count(Type const &) const;
 
 	//mutators prototypes
@@ -74,8 +74,8 @@ public:
 	void swap(const Circular_double_list &);
 	void push_front(Type const &);
 	void push_back(Type const &);
-	Type pop_front(); 
-	Type pop_back(); 
+	Type pop_front();
+	Type pop_back();
 	void insertAt(int, Type const &);
 	void eraseAt(int);
 	int find(Type const &);
@@ -85,46 +85,42 @@ public:
 //accessors 
 
 template <class Type>
-Type Circular_double_list<Type>::front() const { 
-	
-	if (!list_head) { 
-		throw std::underflow_error("Element does not exist");
-	}
-	else {
-		return list_head->node_value;
-	}
-	
-}
-
-template<class Type>
-Type Circular_double_list<Type>::back() const { 
-
-Double_node<Type>* nodePtr = nullptr; // to point to list_head
+Type Circular_double_list<Type>::front() const {
 
 	if (!list_head) {
 		throw std::underflow_error("Element does not exist");
 	}
 	else {
-		nodePtr = list_head;
+		return list_head->node_value;
 	}
-	return nodePtr->previous_node->node_value;
+
 }
 
 template<class Type>
-Type Circular_double_list<Type>::at(int n) const { 
+Type Circular_double_list<Type>::back() const {
+	if (!list_head) {
+		throw std::underflow_error("Element does not exist");
+	}
+	else {
+	}
+	return list_head->previous_node->node_value;
+}
+
+template<class Type>
+Type Circular_double_list<Type>::at(int n) const {
 	Double_node<Type>* nodePtr = nullptr; //to traverse the list 
 
-		if (list_size == 0 || n >= list_size) {
-			throw std::underflow_error("Index out of range");
-		}
-		else {
-			nodePtr = list_head;
+	if (list_size == 0 || n >= list_size) {
+		throw std::underflow_error("Index out of range");
+	}
+	else {
+		nodePtr = list_head;
 
-			for (int i = 0; i < n; i++) {
-				nodePtr = nodePtr->next_node;
-			} //nodePtr points on element n
-			return nodePtr->node_value;
-	
+		for (int i = 0; i < n; i++) {
+			nodePtr = nodePtr->next_node;
+		} //nodePtr points on element n
+		return nodePtr->node_value;
+
 	}
 }
 
@@ -168,7 +164,6 @@ template <class Type>
 void Circular_double_list<Type>::push_front(Type const & data) {
 
 	Double_node<Type>* newNode; //added to front
-	Double_node<Type>* nodePtr; //used to transverse list
 
 	newNode = new Double_node<Type>; //pointing to allocated memory of node
 	newNode->node_value = data; // gave data to new node
@@ -180,16 +175,14 @@ void Circular_double_list<Type>::push_front(Type const & data) {
 		newNode->previous_node = newNode; //pointers point to itself
 	}
 	else {
-		nodePtr = list_head;
-		list_head->previous_node = newNode;
-		// previous of current head now points to new node
-		newNode->next_node = list_head; // new node points to current head
 
-		while (nodePtr->next_node != list_head) { // to move to next node, peek ahead
-			nodePtr = nodePtr->next_node;
-		}
-		nodePtr->next_node = newNode; //last node points to newNode
-		newNode->previous_node = nodePtr; //newNode points to last node
+		newNode->next_node = list_head; // new node front pointer points to current head
+		newNode->previous_node = list_head->previous_node; //new node back points to element n
+
+
+		list_head->previous_node->next_node = newNode;
+		list_head->previous_node = newNode;
+		
 	}
 
 	list_head = newNode; //head points to newNode
@@ -199,7 +192,6 @@ void Circular_double_list<Type>::push_front(Type const & data) {
 template <class Type>
 void Circular_double_list<Type>::push_back(Type const & data) {
 	Double_node<Type>* newNode; //added to front
-	Double_node<Type>* nodePtr; //used to transverse list
 
 	newNode = new Double_node<Type>; //pointing to allocated memory of node
 	newNode->node_value = data; // gave data to new node
@@ -212,45 +204,32 @@ void Circular_double_list<Type>::push_back(Type const & data) {
 		list_head = newNode; //head pointer only updated because it was nullptr b4
 	}
 	else {
-		nodePtr = list_head;
+		newNode->next_node = list_head;
+		newNode->previous_node = list_head->previous_node;
+		list_head->previous_node->next_node = newNode;
 		list_head->previous_node = newNode;
-		// previous of current head now points to new node
-		newNode->next_node = list_head; // new node points to current head
-
-		while (nodePtr->next_node != list_head) { // to move to next node, peek ahead
-			nodePtr = nodePtr->next_node;
-		}
-
-		nodePtr->next_node = newNode; //last node points to newNode
-		newNode->previous_node = nodePtr; //newNode points to last node
 	}
-
 	list_size++; //public variable so might need function to update
 }
 
 template <class Type>
-Type Circular_double_list<Type>::pop_front() { 
+Type Circular_double_list<Type>::pop_front() {
 
 	Double_node<Type>* newHead = nullptr; //temporary new head pointer
-	Double_node<Type>* nodePtr = nullptr; //used to transverse list
 	Type data;
 
 	if (!list_head) {
 		throw std::underflow_error("No front element at index 0");
 	}
-	else{
+	else {
 		data = list_head->node_value; //node value inserted to be returned
 		newHead = list_head->next_node; //newHead is second element now
-		nodePtr = list_head;
-
-		while (nodePtr->next_node != list_head) {
-			nodePtr = nodePtr->next_node;
-		}
-		nodePtr->next_node = newHead; //points last node to newHead
-		newHead->previous_node = nodePtr; //points newHead to last node
+		list_head->previous_node->next_node = newHead; //points last node to newHead
+		newHead->previous_node = list_head->previous_node; //points newHead to last node
 
 		delete list_head; //delete memory in front node
-		list_head = (size() == 1) ? nullptr : newHead;
+
+		list_head = size() == 1 ? nullptr : newHead;
 		//head will point to new head or nullptr depending if there was 1 element
 
 		list_size--; //public variable so might need function to update
@@ -259,19 +238,16 @@ Type Circular_double_list<Type>::pop_front() {
 }
 
 template <class Type>
-Type Circular_double_list<Type>::pop_back() { 
+Type Circular_double_list<Type>::pop_back() {
 
-	Double_node<Type>* nodePtr = nullptr; //used to transverse list
+	Double_node<Type>* nodePtr = nullptr; //used to delete element
 	Type data;
 
 	if (!list_head) {
-		throw std::underflow_error("No element at index n"); }
+		throw std::underflow_error("No element at index n");
+	}
 	else {
-		nodePtr = list_head;
-
-		while (nodePtr->next_node != list_head) {
-			nodePtr = nodePtr->next_node;
-		}
+		nodePtr = list_head->previous_node;
 
 		data = nodePtr->node_value;
 
@@ -335,7 +311,7 @@ void Circular_double_list<Type>::eraseAt(int n) {
 
 	Double_node<Type>* nodePtr = nullptr; //used to transverse list
 
-	if (list_head) { //if list empty, do nothing
+	if (list_head && (n >= 0 && n < size())) { //if list empty or n is out bounds, do nothing
 		nodePtr = list_head;
 		for (int i = 0; i < n; i++) { //nodePtr points to n position
 			nodePtr = nodePtr->next_node;
@@ -344,7 +320,8 @@ void Circular_double_list<Type>::eraseAt(int n) {
 		//  (n+1) node points backwards to (n-1) node
 		nodePtr->previous_node->next_node = nodePtr->next_node;
 		//  (n-1) node points forward to (n+1) node
-		(n) || (list_head = nodePtr->next_node);
+
+		(n) || (list_head = list_head->next_node);
 		//when index 0 is deleted, point head to index 1
 		delete nodePtr;
 		(list_size == 1) && (list_head = nullptr);
@@ -385,13 +362,13 @@ int Circular_double_list<Type>::find(Type const & element) {
 template<class Type>
 void Circular_double_list<Type>::clear() {
 
-	Double_node<Type>* nodePtr; //used to transverse list
-	int size = list_size;
+	int siz = size();
 
 	if (list_head) { //if list is empty do nothing else
-		for (int i = 0; i < size; i++) {
-			eraseAt(i);
+		for (int i = 0; i < siz; i++) {
+			pop_front();
 		}
 	}
 }
 #endif
+

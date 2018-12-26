@@ -48,13 +48,11 @@ private:
 
 public:
 
-	Circular_double_list() {
-		list_head = nullptr;
-		list_size = 0;
-	}
-	Circular_double_list(const Circular_double_list & blueprint) {
-		swap(blueprint);
-	}
+	//contructor initialization list
+	Circular_double_list() :list_head(nullptr), list_size(0) {}
+
+	//copy constructor
+	Circular_double_list(const Circular_double_list &);
 
 	~Circular_double_list() {
 		clear();
@@ -65,12 +63,18 @@ public:
 	bool empty() const { return !list_size; }
 	Type front() const;
 	Type back() const;
-	Type at(int element) const;
+	Type at(int) const;
+	Double_node<Type> *end() const { return list_head->previous_node; }
 	Double_node<Type> *head() const { return list_head; }
 	int count(Type const &) const;
 
-	//mutators prototypes
+	// operators
+	void operator = (const Circular_double_list &);
+	bool operator == (const Circular_double_list &);
+	bool operator != (const Circular_double_list &);
 
+	//mutators prototypes
+	
 	void swap(const Circular_double_list &);
 	void push_front(Type const &);
 	void push_back(Type const &);
@@ -82,7 +86,47 @@ public:
 	void clear();
 };
 
-//accessors 
+
+//copy constructor 
+template <class Type>
+Circular_double_list<Type>::Circular_double_list(const Circular_double_list & instance) {
+
+	int traversals = instance.size();
+
+	list_size = 0;
+	list_head = nullptr; //inititalize defaults incase copy is empty 
+
+	// *******************************//
+	Double_node<Type>* newNode; //used to point at dynamically allocated nodes
+	Double_node<Type>* pointer = instance.head(); //used to traverse copy
+
+	for (int i = 0; i < traversals; i++) {
+		
+		newNode = new Double_node<Type>; 
+		newNode->node_value = pointer->node_value; // gave data to new node from copy
+		newNode->next_node = nullptr;
+		newNode->previous_node = nullptr; //set node pointers null
+
+		if (empty()) {
+			newNode->next_node = newNode;
+			newNode->previous_node = newNode; //pointers point to itself
+			list_head = newNode; //head pointer only updated because it was nullptr b4
+		}
+		else {
+			newNode->next_node = list_head;
+			newNode->previous_node = list_head->previous_node;
+			list_head->previous_node->next_node = newNode;
+			list_head->previous_node = newNode;
+		}
+		list_size++;
+		pointer = pointer->next(); //update pointer and container size
+	}
+}
+
+
+// ********
+// accessors 
+// ******** 
 
 template <class Type>
 Type Circular_double_list<Type>::front() const {
@@ -143,22 +187,74 @@ int Circular_double_list<Type>::count(Type const & data) const {
 }
 
 // ********
+// operators
+// ********
+
+template<class Type>
+void Circular_double_list<Type>::operator=(const Circular_double_list & copy) {
+	swap(copy);
+}
+
+template<class Type>
+bool Circular_double_list<Type>::operator==(const Circular_double_list & comparison) {
+
+	bool flag = true;
+	int sizC = comparison.size();
+
+	if (size() != sizC) { // if they are different sizes, return false
+		flag = false;
+	}
+
+	for (int i = 0; (flag)&&( i < sizC) ; i++) {
+		
+		if (at(i) != comparison.at(i)) {
+			flag = false;
+		}
+		//if any element is different, return false
+	}
+	return flag;
+}
+
+template<class Type>
+bool Circular_double_list<Type>::operator!=(const Circular_double_list & comparison) {
+
+	bool flag = false;
+	int sizC = comparison.size();
+
+	if (size() != sizC) { // if they are different sizes, return true
+		flag = true;
+	}
+
+	for (int i = 0; (!flag) && (i < sizC); i++) {
+
+		if (at(i) != comparison.at(i)) { 
+			flag = true;
+		}
+		//if any element is different, return true
+	}
+	return flag;
+}
+
+
+
+// ********
 // mutators 
 // ********
 
 template<class Type>
-void Circular_double_list<Type>::swap(const Circular_double_list & blueprint) {
+void Circular_double_list<Type>::swap(const Circular_double_list & copy) {
+	int siz = copy.size();
 
-	int size = blueprint.size();
-
-	if (list_head) {
+	if (!empty()) {
 		clear();
-	} //if there are items in list, clear
-
-	for (int i = 0; i < size; i++) {
-		insertAt(i, blueprint.at(i));
 	}
+	
+	for (int i = 0; i < siz; i++) {
+		push_back(copy.at(i));
+	}
+
 }
+
 
 template <class Type>
 void Circular_double_list<Type>::push_front(Type const & data) {
@@ -182,7 +278,7 @@ void Circular_double_list<Type>::push_front(Type const & data) {
 
 		list_head->previous_node->next_node = newNode;
 		list_head->previous_node = newNode;
-		
+
 	}
 
 	list_head = newNode; //head points to newNode
@@ -209,7 +305,7 @@ void Circular_double_list<Type>::push_back(Type const & data) {
 		list_head->previous_node->next_node = newNode;
 		list_head->previous_node = newNode;
 	}
-	list_size++; //public variable so might need function to update
+	list_size++; 
 }
 
 template <class Type>
@@ -352,9 +448,9 @@ int Circular_double_list<Type>::find(Type const & element) {
 		if (nodePtr->node_value == element) {
 			index = count;
 		}
-		else cout << "Error: Value not found, returning -1" << endl;
+		else std::cout << "Error: Value not found, returning -1" << std::endl;
 	}
-	else cout << "Error: List Empty, returning -1" << endl;
+	else std::cout << "Error: List Empty, returning -1" << std::endl;
 
 	return index;
 }
@@ -371,4 +467,3 @@ void Circular_double_list<Type>::clear() {
 	}
 }
 #endif
-
